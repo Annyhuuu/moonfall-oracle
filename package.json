@@ -1,0 +1,7 @@
+{
+  "name": "sacred-triad-tarot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "圣三角塔罗占卜 - Vercel 部署版"
+}
