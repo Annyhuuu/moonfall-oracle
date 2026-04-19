@@ -11,8 +11,8 @@
 <style>
 /* ============ 重置 & 基础 ============ */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;overflow-x:hidden;background:#0a0618;color:#f0e6d2}
-body{font-family:'Noto Serif SC','Cormorant Garamond',serif;font-weight:400;line-height:1.7;min-height:100vh;min-height:100dvh;overscroll-behavior:none}
+html{width:100%;overflow-x:hidden;overflow-y:auto;background:#0a0618;color:#f0e6d2}
+body{width:100%;font-family:'Noto Serif SC','Cormorant Garamond',serif;font-weight:400;line-height:1.7;min-height:100vh;min-height:100dvh;overscroll-behavior:none}
 button{font-family:inherit;border:none;background:none;color:inherit;cursor:pointer}
 input,textarea{font-family:inherit;color:inherit;background:none;border:none;outline:none}
 
@@ -131,8 +131,8 @@ input,textarea{font-family:inherit;color:inherit;background:none;border:none;out
 .flying-card{position:fixed;width:72px;height:112px;z-index:999;pointer-events:none;transition:all 1s cubic-bezier(.5,.1,.3,1);transform-origin:center}
 
 /* ============ 阶段三：翻牌解析 ============ */
-.stage-reveal{padding:50px 20px 40px;flex-direction:column;align-items:center;min-height:100vh;min-height:100dvh;overflow-y:auto;overscroll-behavior:contain}
-.stage-reveal:not(.revealed-all){height:100vh;height:100dvh;overflow:hidden}
+.stage-reveal{padding:50px 20px 40px;flex-direction:column;align-items:center;min-height:100vh;min-height:100dvh}
+html.scroll-locked,html.scroll-locked body{overflow:hidden;height:100vh;height:100dvh}
 .reveal-head{text-align:center;margin-bottom:24px}
 .reveal-title{font-family:var(--display);font-size:18px;letter-spacing:.3em;color:var(--gold-bright);margin-bottom:4px}
 .reveal-q{font-family:var(--italic);font-style:italic;font-size:14px;color:var(--ink-dim);max-width:340px;line-height:1.6}
@@ -178,22 +178,43 @@ input,textarea{font-family:inherit;color:inherit;background:none;border:none;out
 .panel-pos-meaning{font-family:var(--italic);font-style:italic;font-size:14px;line-height:1.85;color:var(--ink-dim);border-left:2px solid var(--gold);padding-left:12px;margin-top:6px}
 
 /* 下滑引导 */
-.scroll-hint{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--gold);opacity:0;transition:opacity .5s;z-index:10;pointer-events:none}
-.scroll-hint.show{opacity:.9;animation:hintBob 1.8s ease-in-out infinite}
-@keyframes hintBob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
-.scroll-hint-text{font-family:var(--display);font-size:11px;letter-spacing:.3em}
-.scroll-hint-arrow{font-size:20px;line-height:1}
+.scroll-hint{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--gold);opacity:0;transition:opacity .5s;z-index:10;pointer-events:none;padding:10px 22px;background:rgba(10,6,24,.85);border:1px solid var(--edge-bright);border-radius:24px;backdrop-filter:blur(8px);box-shadow:0 8px 24px rgba(0,0,0,.5),0 0 20px rgba(212,168,74,.2);cursor:pointer}
+.scroll-hint.show{opacity:.95;animation:hintBob 2.2s ease-in-out infinite}
+.scroll-hint:hover{background:rgba(18,10,42,.95);box-shadow:0 8px 24px rgba(0,0,0,.5),0 0 30px rgba(212,168,74,.4)}
+@keyframes hintBob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-4px)}}
+.scroll-hint-text{font-family:var(--display);font-size:10px;letter-spacing:.3em;white-space:nowrap}
+.scroll-hint-arrow{font-size:14px;line-height:1}
 
 /* ============ 阶段四：综合解析 ============ */
 .stage-synthesis{min-height:100vh;min-height:100dvh}
 .sticky-head{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,rgba(10,6,24,.95) 70%,transparent);backdrop-filter:blur(12px);padding:14px 16px 20px;border-bottom:1px solid var(--edge)}
-.sticky-triad{display:flex;gap:10px;justify-content:center;margin-bottom:6px}
-.sticky-slot{width:44px;aspect-ratio:72/112;border-radius:3px;overflow:hidden;border:1px solid var(--edge);box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.sticky-triad{display:flex;gap:22px;justify-content:center;margin-bottom:8px}
+.sticky-slot{width:72px;aspect-ratio:72/112;border-radius:4px;overflow:hidden;border:1px solid var(--edge);box-shadow:0 3px 10px rgba(0,0,0,.5);cursor:pointer;transition:transform .2s,box-shadow .2s}
+.sticky-slot:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(212,168,74,.3);border-color:var(--edge-bright)}
 .sticky-slot .card-face{box-shadow:inset 0 0 0 1px #3a2818,inset 0 0 0 2px #d4a84a}
-.sticky-slot .card-face-label{padding:1px 0;line-height:1}
-.sticky-slot .card-face-num{font-size:5px}
-.sticky-slot .card-face-name{font-size:4px;letter-spacing:0}
+.sticky-slot .card-face-label{padding:2px 1px;line-height:1}
+.sticky-slot .card-face-num{font-size:6px}
+.sticky-slot .card-face-name{font-size:5px;letter-spacing:0}
 .sticky-slot.rev{transform:rotate(180deg)}
+.sticky-slot.rev:hover{transform:rotate(180deg) translateY(2px)}
+
+/* 单牌浮动气泡（合体解析页） */
+.card-pop-overlay{position:fixed;inset:0;z-index:900;background:rgba(7,4,26,.6);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding:80px 20px 40px;animation:popFade .25s ease}
+.card-pop-overlay.show{display:flex}
+@keyframes popFade{from{opacity:0}to{opacity:1}}
+.card-pop{width:100%;max-width:360px;background:linear-gradient(180deg,rgba(18,10,42,.96),rgba(10,6,24,.96));border:1px solid var(--edge-bright);border-radius:4px;padding:24px 22px 22px;position:relative;animation:popIn .35s cubic-bezier(.34,1.4,.64,1);box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 40px rgba(212,168,74,.15)}
+@keyframes popIn{from{opacity:0;transform:translateY(-20px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+.card-pop::before{content:'';position:absolute;top:0;left:20px;right:20px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.card-pop-close{position:absolute;top:10px;right:10px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:var(--ink-dim);font-size:20px;cursor:pointer;border-radius:50%;transition:all .2s}
+.card-pop-close:hover{color:var(--gold);background:rgba(212,168,74,.1)}
+.card-pop-pos{font-family:var(--display);font-size:11px;letter-spacing:.3em;color:var(--gold);margin-bottom:4px}
+.card-pop-name{font-family:var(--display);font-size:20px;font-weight:600;color:var(--ink);letter-spacing:.08em;margin-bottom:2px}
+.card-pop-en{font-family:var(--italic);font-style:italic;font-size:13px;color:var(--ink-dim);margin-bottom:4px}
+.card-pop-state{display:inline-block;font-family:var(--body);font-size:10px;padding:2px 8px;border:1px solid var(--edge);border-radius:2px;color:var(--gold);letter-spacing:.2em;margin-bottom:12px}
+.card-pop-state.reversed{color:var(--blood);border-color:rgba(122,42,42,.5)}
+.card-pop-kws{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.card-pop-kw{font-family:var(--body);font-size:11px;padding:3px 8px;background:rgba(212,168,74,.08);border:1px solid var(--edge);color:var(--gold);border-radius:2px;letter-spacing:.1em}
+.card-pop-meaning{font-family:var(--body);font-size:13px;line-height:1.75;color:var(--ink)}
 .sticky-q{text-align:center;font-family:var(--italic);font-style:italic;font-size:12px;color:var(--ink-dim);padding:0 20px}
 .synth-body{padding:32px 24px 80px;max-width:600px;margin:0 auto}
 .synth-section{margin-bottom:36px;opacity:0;transform:translateY(20px);animation:synthIn .8s ease forwards}
@@ -327,11 +348,19 @@ input,textarea{font-family:inherit;color:inherit;background:none;border:none;out
 
 <!-- 下滑引导 -->
 <div class="scroll-hint" id="scroll-hint">
-  <span class="scroll-hint-text">SCROLL</span>
+  <span class="scroll-hint-text">查 看 综 合 解 答</span>
   <span class="scroll-hint-arrow">▼</span>
 </div>
 
 <!-- 分享 modal -->
+<!-- 单牌浮动气泡（合体解析页点击时显示） -->
+<div class="card-pop-overlay" id="card-pop-overlay">
+  <div class="card-pop" id="card-pop">
+    <button class="card-pop-close" id="card-pop-close">×</button>
+    <div id="card-pop-body"></div>
+  </div>
+</div>
+
 <div class="modal" id="share-modal">
   <button class="modal-close" id="modal-close">×</button>
   <div class="modal-inner">
@@ -652,7 +681,16 @@ function initIntro(){
   });
 
   const qInput = document.getElementById('q-input');
-  qInput.addEventListener('input', validateIntro);
+  qInput.addEventListener('input', ()=>{
+    validateIntro();
+    // 如果用户手动改了内容（包括清空），取消 tag 选中态
+    const val = qInput.value.trim();
+    const active = document.querySelector('.tag.active');
+    if(active){
+      const expected = TAG_QUESTIONS[active.dataset.id];
+      if(val !== expected) active.classList.remove('active');
+    }
+  });
 
   document.getElementById('btn-start').addEventListener('click', ()=>{
     state.question = qInput.value.trim();
@@ -785,6 +823,7 @@ function updateDrawnCount(){
    ============================================================ */
 function enterReveal(){
   goStage('reveal');
+  document.documentElement.classList.add('scroll-locked');
   document.getElementById('reveal-q').textContent = `「 ${state.question} 」`;
   buildTriad();
 }
@@ -927,24 +966,39 @@ function showScrollHint(){
   const hint = document.getElementById('scroll-hint');
   hint.classList.add('show');
   // 解锁滚动
-  document.getElementById('stage-reveal').classList.add('revealed-all');
+  document.documentElement.classList.remove('scroll-locked');
 
-  // 监听滚动或向上滑触发进入阶段四
   let triggered = false;
-  const onTouch = (ev)=>{
+  const trigger = ()=>{
     if(triggered) return;
     triggered = true;
     hint.classList.remove('show');
     enterSynthesis();
-    window.removeEventListener('wheel', onTouch);
-    window.removeEventListener('touchmove', onTouch);
-    window.removeEventListener('scroll', onTouch);
+    window.removeEventListener('scroll', onScroll);
+    hint.removeEventListener('click', trigger);
   };
+
+  // 滚动到接近底部才触发（给用户留出滑动查看内容的空间）
+  const onScroll = ()=>{
+    const scrolled = window.scrollY + window.innerHeight;
+    const full = document.documentElement.scrollHeight;
+    // 滚到距底部 40px 以内才触发
+    if(scrolled >= full - 40) trigger();
+  };
+
+  // 点击 scroll hint 箭头立即触发
   hint.style.pointerEvents = 'auto';
-  hint.addEventListener('click', onTouch);
-  window.addEventListener('wheel', onTouch, {passive:true});
-  window.addEventListener('touchmove', onTouch, {passive:true});
-  setTimeout(()=>window.addEventListener('scroll', onTouch, {passive:true}), 300);
+  hint.addEventListener('click', trigger);
+
+  // 延迟绑定，避免上一次翻牌的滚动被误识别
+  setTimeout(()=>{
+    window.addEventListener('scroll', onScroll, {passive:true});
+    // 立即检查一次（如果内容不够一屏，scroll 永远不会触发）
+    if(document.documentElement.scrollHeight <= window.innerHeight + 40){
+      // 内容不需要滚动就能看完 → 点击 hint 或等用户手动
+      // 不做任何事，让用户主动点击
+    }
+  }, 300);
 }
 
 /* ============================================================
@@ -952,6 +1006,7 @@ function showScrollHint(){
    ============================================================ */
 function enterSynthesis(){
   goStage('synthesis');
+  document.documentElement.classList.remove('scroll-locked');  // 保险起见再次解锁
   buildStickyHead();
   buildSynthBody();
   requestSynthesis();
@@ -960,13 +1015,38 @@ function enterSynthesis(){
 function buildStickyHead(){
   const st = document.getElementById('sticky-triad');
   st.innerHTML = '';
-  state.drawnCards.forEach(d=>{
+  state.drawnCards.forEach((d, i)=>{
     const el = document.createElement('div');
     el.className = 'sticky-slot' + (d.reversed?' rev':'');
     el.innerHTML = renderCardFace(d.card);
+    el.addEventListener('click', ()=>openCardPop(i));
     st.appendChild(el);
   });
   document.getElementById('sticky-q').textContent = `「 ${state.question} 」`;
+}
+
+function openCardPop(idx){
+  const d = state.drawnCards[idx];
+  if(!d) return;
+  const c = d.card;
+  const kws = d.reversed ? c.down : c.up;
+  const meaning = d.reversed ? c.md : c.mu;
+  const body = document.getElementById('card-pop-body');
+  body.innerHTML = `
+    <div class="card-pop-pos">${POS_LABELS[idx]} · ${POS_EN[idx]}</div>
+    <div class="card-pop-name">${c.name}</div>
+    <div class="card-pop-en">${c.en}</div>
+    <span class="card-pop-state${d.reversed?' reversed':''}">${d.reversed?'逆 位 · Reversed':'正 位 · Upright'}</span>
+    <div class="card-pop-kws">
+      ${kws.slice(0,4).map(k=>`<span class="card-pop-kw">${k}</span>`).join('')}
+    </div>
+    <p class="card-pop-meaning">${meaning}</p>
+  `;
+  document.getElementById('card-pop-overlay').classList.add('show');
+}
+
+function closeCardPop(){
+  document.getElementById('card-pop-overlay').classList.remove('show');
 }
 
 function buildSynthBody(){
@@ -1005,9 +1085,8 @@ function buildSynthBody(){
   document.getElementById('btn-restart').addEventListener('click', restart);
 }
 
-/* 调用 Claude API 生成综合解析 */
+/* 调用后端代理生成综合解析（DeepSeek via /api/tarot） */
 async function requestSynthesis(){
-  // 只把必要数据发给后端代理；完整 prompt 在 api/tarot.js 构造
   const payload = {
     question: state.question,
     cards: state.drawnCards.map(d => ({
@@ -1095,6 +1174,20 @@ document.addEventListener('DOMContentLoaded', ()=>{
     document.getElementById('share-modal').classList.remove('show');
   });
   document.getElementById('btn-download').addEventListener('click', downloadShareImage);
+
+  // 单牌浮动气泡关闭
+  document.getElementById('card-pop-close').addEventListener('click', closeCardPop);
+  document.getElementById('card-pop-overlay').addEventListener('click', (e)=>{
+    // 点击 overlay 背景（不是弹窗本体）关闭
+    if(e.target.id === 'card-pop-overlay') closeCardPop();
+  });
+  // ESC 关闭
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape'){
+      closeCardPop();
+      document.getElementById('share-modal').classList.remove('show');
+    }
+  });
 });
 
 async function drawShareImage(){
@@ -1375,6 +1468,7 @@ function restart(){
   state.focusedIndex = -1;
   state.allRevealed = false;
   state.synthText = '';
+  document.documentElement.classList.remove('scroll-locked');
   document.getElementById('q-input').value = '';
   document.querySelectorAll('.tag').forEach(t=>t.classList.remove('active'));
   validateIntro();
